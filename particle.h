@@ -19,6 +19,8 @@ class Particle {
 
 	void particleCollision(std::vector<Particle>& particles, int index);
 
+	void boundsCollision(int screenWidth, int screenHeight);
+
     void update(float dt);
 
     void draw();

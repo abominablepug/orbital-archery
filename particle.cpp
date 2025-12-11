@@ -68,6 +68,24 @@ void Particle::particleCollision(std::vector<Particle>& particles, int index) {
 	}
 }
 
+void Particle::boundsCollision(int screenWidth, int screenHeight) {
+	if (position.x - radius < 0) {
+		position.x = radius;
+		velocity.x *= -1;
+	} else if (position.x + radius > screenWidth) {
+		position.x = screenWidth - radius;
+		velocity.x *= -1;
+	}
+
+	if (position.y - radius < 0) {
+		position.y = radius;
+		velocity.y *= -1;
+	} else if (position.y + radius > screenHeight) {
+		position.y = screenHeight - radius;
+		velocity.y *= -1;
+	}
+}
+
 void Particle::update(float dt) {
 	position.x += velocity.x * dt;
 	position.y += velocity.y * dt;
