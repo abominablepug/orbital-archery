@@ -5,7 +5,7 @@ set -euo pipefail
 # Usage: ./run.sh
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SRCS="$DIR/main.cpp $DIR/particle.cpp"
+SRCS="$DIR/main.cpp $DIR/particle.cpp $DIR/game.cpp"
 OUT="$DIR/main"
 
 echo "Compiling $SRCS -> $OUT"

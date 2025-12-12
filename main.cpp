@@ -1,7 +1,9 @@
 #include <raylib.h>
 #include "particle.h"
+#include "game.h"
 #include <vector>
 
+Game game = Game();
 std::vector<Particle> particles;
 
 void drawParticles(float dt) {
@@ -9,20 +11,9 @@ void drawParticles(float dt) {
 		particles[i].update(dt);
 		particles[i].draw();
 		particles[i].particleCollision(particles, i);
+		particles[i].boundsCollision(GetScreenWidth(), GetScreenHeight());
 	}
 }
-
-void spawnParticle() {
-	if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-		Vector2 mousePos = GetMousePosition();
-		Vector2 velocity = { 50.0f, -50.0f };
-		Color color = BLUE;
-		Vector2 acceleration = { 0, 10.8f };
-		int radius = 5;
-		Particle newParticle(mousePos, velocity, color, acceleration, radius);
-		particles.push_back(newParticle);
-	}
-};
 
 int main() {
     
@@ -36,7 +27,8 @@ int main() {
     while (!WindowShouldClose()) {
 
         float dt = GetFrameTime() * 3;
-		spawnParticle();
+
+		game.spawnParticle(particles);
 
         BeginDrawing();
 
