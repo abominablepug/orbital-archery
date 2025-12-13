@@ -28,12 +28,12 @@ int main() {
 
         float dt = GetFrameTime() * 3;
 
-		game.spawnParticle(particles);
 
         BeginDrawing();
 
         ClearBackground(BLACK);
 
+		game.spawnParticle(particles);
 		drawParticles(dt);
 
         EndDrawing();
