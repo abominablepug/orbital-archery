@@ -12,7 +12,7 @@ void update(float dt) {
 	for (size_t i = 0; i < particles.size(); i++) {
 		particles[i].setAcceleration(celestialBodies);
 		particles[i].update(dt);
-		particles[i].collisionCheck(particles, i, GetScreenWidth(), GetScreenHeight());
+		particles[i].collisionCheck(particles, i, GetScreenWidth(), GetScreenHeight(), game.enableWallCollision);
 		particles[i].celestialCollision(celestialBodies);
 		particles[i].draw();
 	}
@@ -39,12 +39,21 @@ int main() {
 
         ClearBackground(BLACK);
 
-		game.spawnParticle(particles);
-		game.spawnCelestialBody(celestialBodies);
-		update(dt);
+		if (game.currentState == MENU) {
+			game.drawStartScreen();
+		} else if (game.currentState == PLAYING) {
+			BeginMode2D(game.camera);
+				DrawRectangleLines(0, 0, GetScreenWidth(), GetScreenHeight(), DARKGRAY);
+				game.spawnParticle(particles);
+				game.spawnCelestialBody(celestialBodies);
+				update(dt);
+			EndMode2D();
+			game.drawSideBar(particles, celestialBodies);
+		}
 
         EndDrawing();
     }
     
+	CloseWindow();
     return 0;
 }

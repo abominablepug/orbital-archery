@@ -96,10 +96,10 @@ void Particle::boundsCollision(int screenWidth, int screenHeight) {
 	}
 }
 
-void Particle::collisionCheck(std::vector<Particle>& particles, int index, int screenWidth, int screenHeight) {
+void Particle::collisionCheck(std::vector<Particle>& particles, int index, int screenWidth, int screenHeight, bool enableWallCollision) {
 	particleCollision(particles, index);
-	boundsCollision(screenWidth, screenHeight);
-}
+	if (enableWallCollision) boundsCollision(screenWidth, screenHeight);
+	}
 
 void Particle::celestialCollision(std::vector<CelestialBody>& celestialBodies) {
 	for (size_t i = 0; i < celestialBodies.size(); i++) {

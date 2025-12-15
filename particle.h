@@ -26,7 +26,7 @@ class Particle {
 
 	void celestialCollision(std::vector<CelestialBody>& celestialBodies);
 
-	void collisionCheck(std::vector<Particle>& particles, int index, int screenWidth, int screenHeight);
+	void collisionCheck(std::vector<Particle>& particles, int index, int screenWidth, int screenHeight, bool enableWallCollision);
 
     void update(float dt);
 
