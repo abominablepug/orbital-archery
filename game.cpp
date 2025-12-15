@@ -6,6 +6,8 @@
 #include <vector>
 #include <cmath>
 
+const float mult = 2.0f;
+
 Game::Game(Vector2 dragStartPos) {
 	this->dragStartPos = dragStartPos;
 }
@@ -41,7 +43,7 @@ void Game::spawnParticle(std::vector<Particle>& particles) {
 		}
 	}
 	if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
-		Vector2 velocity = { (dragStartPos.x - currentPos.x), (dragStartPos.y - currentPos.y) };
+		Vector2 velocity = { (dragStartPos.x - currentPos.x) * mult, (dragStartPos.y - currentPos.y) * mult };
 		Color color = BLUE;
 		int radius = 5;
 		Particle newParticle(currentPos, velocity, color, radius);

@@ -105,27 +105,36 @@ void Particle::celestialCollision(std::vector<CelestialBody>& celestialBodies) {
 	for (size_t i = 0; i < celestialBodies.size(); i++) {
 		CelestialBody& body = celestialBodies[i];
 
-		float dx = this->position.x - body.getPosition().x;
-		float dy = this->position.y - body.getPosition().y;
-		float distance = std::sqrt(dx * dx + dy * dy);
+        float dx = this->position.x - body.getPosition().x;
+        float dy = this->position.y - body.getPosition().y;
+        float distance = std::sqrt(dx * dx + dy * dy);
 
-		if (distance < this->radius + body.getRadius()) {
-			// Overlap
-			float overlap = (this->radius + body.getRadius() - distance) / 2.0f;
+        if (distance < this->radius + body.getRadius()) {
+            
+            float nx = dx / distance;
+            float ny = dy / distance;
 
-			// Normal vector from body to particle
-			float nx = dx / distance;
-			float ny = dy / distance;
+            float overlap = (this->radius + body.getRadius() - distance);
+            this->position.x += nx * overlap;
+            this->position.y += ny * overlap;
 
-			// Move particle out
-			this->position.x += nx * overlap;
-			this->position.y += ny * overlap;
+            float vn = this->velocity.x * nx + this->velocity.y * ny;
 
-			// Reflect velocity
-			float dotProduct = this->velocity.x * nx + this->velocity.y * ny;
-			this->velocity.x -= 2 * dotProduct * nx;
-			this->velocity.y -= 2 * dotProduct * ny;
-		}
+            if (vn > 0.0f) continue;
+
+            float restingThreshold = 40.0f; // You may need to tweak this based on your gravity scale
+
+            float restitution = 0.5f; 
+
+            if (std::abs(vn) < restingThreshold) {
+                this->velocity.x -= vn * nx;
+                this->velocity.y -= vn * ny;
+            } else {
+                float impulse = -(1.0f + restitution) * vn;
+                this->velocity.x += impulse * nx;
+                this->velocity.y += impulse * ny;
+            }
+        }
 	}
 }
 
