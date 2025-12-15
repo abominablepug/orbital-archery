@@ -25,7 +25,7 @@ Game::Game(Vector2 dragStartPos) {
 	sideBarRect = { 0, 0, 250, (float)GetScreenHeight() };
 	sideBarToggleRect = { 10, 10, 30, 30 };
 
-	enableWallCollision = true;
+	enableWallCollision = false;
 	particleMass = 50.0f;
 	zoomLevel = 1.0f;
 	timeScale = 1.0f;
@@ -147,7 +147,7 @@ void Game::drawStartScreen() {
         DrawText(cta, centerX - ctaWidth/2, centerY + 150, ctaFontSize, GRAY);
     }
 
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
         currentState = PLAYING;
     }
 }
@@ -194,7 +194,7 @@ void Game::drawSideBar(std::vector<Particle>& particles, std::vector<CelestialBo
     // Close Button
     Rectangle closeBtn = { sideBarRect.width - 40, 10, 30, 30 };
     DrawText("X", closeBtn.x + 8, closeBtn.y + 5, 20, RED);
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), closeBtn)) {
+    if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), closeBtn)) {
         isSideBarOpen = false;
     }
 
