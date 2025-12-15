@@ -8,6 +8,10 @@ Game::Game(Vector2 dragStartPos) {
 	this->dragStartPos = dragStartPos;
 }
 
+float Game::Vector2Distance(Vector2 a, Vector2 b) {
+	return sqrtf((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
+}
+
 void Game::spawnParticle(std::vector<Particle>& particles) {
 	Vector2 currentPos = GetMousePosition();
 	if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -45,5 +49,21 @@ void Game::spawnParticle(std::vector<Particle>& particles) {
 		int radius = 5;
 		Particle newParticle(currentPos, velocity, color, acceleration, radius);
 		particles.push_back(newParticle);
+	}
+}
+
+void Game::spawnCelestialBody(std::vector<CelestialBody>& celestialBodies) {
+	Vector2 currentPos = GetMousePosition();
+	if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
+		dragStartPos = currentPos;
+	}
+	if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON)) {
+		float radius = Vector2Distance(dragStartPos, currentPos);
+		DrawCircleV(dragStartPos, radius, GREEN);
+	}
+	if (IsMouseButtonReleased(MOUSE_RIGHT_BUTTON)) {
+		float radius = Vector2Distance(dragStartPos, currentPos);
+		CelestialBody newBody(dragStartPos, radius);
+		celestialBodies.push_back(newBody);
 	}
 }

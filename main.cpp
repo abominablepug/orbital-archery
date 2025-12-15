@@ -1,10 +1,12 @@
 #include <raylib.h>
-#include "particle.h"
-#include "game.h"
 #include <vector>
+#include "particle.h"
+#include "celestialBody.h"
+#include "game.h"
 
 Game game = Game();
 std::vector<Particle> particles;
+std::vector<CelestialBody> celestialBodies;
 
 void drawParticles(float dt) {
 	for (size_t i = 0; i < particles.size(); i++) {
@@ -12,6 +14,12 @@ void drawParticles(float dt) {
 		particles[i].draw();
 		particles[i].particleCollision(particles, i);
 		particles[i].boundsCollision(GetScreenWidth(), GetScreenHeight());
+	}
+}
+
+void drawCelestialBodies() {
+	for (size_t i = 0; i < celestialBodies.size(); i++) {
+		celestialBodies[i].draw();
 	}
 }
 
@@ -34,7 +42,9 @@ int main() {
         ClearBackground(BLACK);
 
 		game.spawnParticle(particles);
+		game.spawnCelestialBody(celestialBodies);
 		drawParticles(dt);
+		drawCelestialBodies();
 
         EndDrawing();
     }
