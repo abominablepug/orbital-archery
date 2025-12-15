@@ -15,6 +15,10 @@ public:
 
 	void draw();
 
+	Vector2 getPosition() { return position; }
+
+	float getRadius() { return radius; }
+
 };
 
 #endif

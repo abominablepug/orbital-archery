@@ -2,28 +2,39 @@
 #define PARTICLE_H
 
 #include "raylib.h"
+#include "celestialBody.h"
 #include <vector>
 
 class Particle {
     private:
     Vector2 position;
     Vector2 velocity;
-    Vector2 acceleration;
+    Vector2 acceleration = { 0.0f, 0.0f };
     int radius;
     Color color;
-
-    public:
-    Particle(Vector2 pos, Vector2 vel, Color col, Vector2 acc = {0, 9.81f}, int rad = 5);
-
-	void setVelocity(Vector2 vel);
 
 	void particleCollision(std::vector<Particle>& particles, int index);
 
 	void boundsCollision(int screenWidth, int screenHeight);
 
+    public:
+    Particle(Vector2 pos, Vector2 vel, Color col, int rad = 5);
+
+	void setVelocity(Vector2 vel);
+
+	void setAcceleration(std::vector<CelestialBody>& celestialBodies);
+
+	void celestialCollision(std::vector<CelestialBody>& celestialBodies);
+
+	void collisionCheck(std::vector<Particle>& particles, int index, int screenWidth, int screenHeight);
+
     void update(float dt);
 
     void draw();
+
+	Vector2 getPosition() { return position; }
+
+	float getRadius() { return radius; }
 };
 
-#endif // PARTICLE_H
+#endif

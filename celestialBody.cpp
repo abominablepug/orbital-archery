@@ -2,14 +2,16 @@
 #include "raylib.h"
 #include <cmath>
 
+
 CelestialBody::CelestialBody(Vector2 position, float radius) {
 	this->radius = radius;
 	this->position = position;
 }
 
 Vector2 CelestialBody::resultantAcceleration(Vector2& otherPosition) {
-	const double G = 6.67430e-11;
-	float mass = radius * radius;
+	const float density = 1.5f;
+	const float G = 5000.0f;  // Scaled gravitational constant for game physics
+	float mass = density * (radius * radius * PI);  // Mass proportional to area, scaled for effect
 
 	float dx = otherPosition.x - position.x;
 	float dy = otherPosition.y - position.y;
@@ -22,8 +24,8 @@ Vector2 CelestialBody::resultantAcceleration(Vector2& otherPosition) {
 	float distance = std::sqrt(distanceSquared);
 	float forceMagnitude = G * mass / distanceSquared;
 
-	float directionX = dx / distance;
-	float directionY = dy / distance;
+	float directionX = -dx / distance;
+	float directionY = -dy / distance;
 
 	float accelerationX = forceMagnitude * directionX;
 	float accelerationY = forceMagnitude * directionY;

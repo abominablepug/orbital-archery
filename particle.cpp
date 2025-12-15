@@ -1,17 +1,27 @@
+#include "raylib.h"
+#include "raymath.h"
 #include "particle.h"
+#include "celestialBody.h"
 #include <cmath>
 #include <vector>
 
-Particle::Particle(Vector2 pos, Vector2 vel, Color col, Vector2 acc, int rad) {
+Particle::Particle(Vector2 pos, Vector2 vel, Color col, int rad) {
 	position = pos;
 	velocity = vel;
 	color = col;
-	acceleration = acc;
 	radius = rad;
 }
 
 void Particle::setVelocity(Vector2 vel) {
 	velocity = vel;
+}
+
+void Particle::setAcceleration(std::vector<CelestialBody>& celestialBodies) {
+	Vector2 totalAcceleration = {0, 0};
+	for (size_t i = 0; i < celestialBodies.size(); i++) {
+		totalAcceleration = Vector2Add(totalAcceleration, celestialBodies[i].resultantAcceleration(this->position));
+	}
+	this->acceleration = totalAcceleration;
 }
 
 void Particle::particleCollision(std::vector<Particle>& particles, int index) {
@@ -86,11 +96,44 @@ void Particle::boundsCollision(int screenWidth, int screenHeight) {
 	}
 }
 
+void Particle::collisionCheck(std::vector<Particle>& particles, int index, int screenWidth, int screenHeight) {
+	particleCollision(particles, index);
+	boundsCollision(screenWidth, screenHeight);
+}
+
+void Particle::celestialCollision(std::vector<CelestialBody>& celestialBodies) {
+	for (size_t i = 0; i < celestialBodies.size(); i++) {
+		CelestialBody& body = celestialBodies[i];
+
+		float dx = this->position.x - body.getPosition().x;
+		float dy = this->position.y - body.getPosition().y;
+		float distance = std::sqrt(dx * dx + dy * dy);
+
+		if (distance < this->radius + body.getRadius()) {
+			// Overlap
+			float overlap = (this->radius + body.getRadius() - distance) / 2.0f;
+
+			// Normal vector from body to particle
+			float nx = dx / distance;
+			float ny = dy / distance;
+
+			// Move particle out
+			this->position.x += nx * overlap;
+			this->position.y += ny * overlap;
+
+			// Reflect velocity
+			float dotProduct = this->velocity.x * nx + this->velocity.y * ny;
+			this->velocity.x -= 2 * dotProduct * nx;
+			this->velocity.y -= 2 * dotProduct * ny;
+		}
+	}
+}
+
 void Particle::update(float dt) {
-	position.x += velocity.x * dt;
-	position.y += velocity.y * dt;
 	velocity.x += acceleration.x * dt;
 	velocity.y += acceleration.y * dt;
+	position.x += velocity.x * dt;
+	position.y += velocity.y * dt;
 }
 
 void Particle::draw() {

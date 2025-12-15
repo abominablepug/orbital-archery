@@ -1,15 +1,13 @@
 #include "game.h"
 #include "particle.h"
+#include "celestialBody.h"
 #include <raylib.h>
+#include <raymath.h>
 #include <vector>
 #include <cmath>
 
 Game::Game(Vector2 dragStartPos) {
 	this->dragStartPos = dragStartPos;
-}
-
-float Game::Vector2Distance(Vector2 a, Vector2 b) {
-	return sqrtf((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
 }
 
 void Game::spawnParticle(std::vector<Particle>& particles) {
@@ -45,9 +43,8 @@ void Game::spawnParticle(std::vector<Particle>& particles) {
 	if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
 		Vector2 velocity = { (dragStartPos.x - currentPos.x), (dragStartPos.y - currentPos.y) };
 		Color color = BLUE;
-		Vector2 acceleration = { 0, 9.8f };
 		int radius = 5;
-		Particle newParticle(currentPos, velocity, color, acceleration, radius);
+		Particle newParticle(currentPos, velocity, color, radius);
 		particles.push_back(newParticle);
 	}
 }

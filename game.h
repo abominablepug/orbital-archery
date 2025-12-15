@@ -2,8 +2,8 @@
 #define GAME_H
 
 #include "raylib.h"
-#include "particle.h"
 #include <vector>
+#include "particle.h"
 #include "celestialBody.h"
 
 class Game {
@@ -12,8 +12,6 @@ private:
 public:
 
 	Game(Vector2 dragStartPos = {0, 0});
-
-	float Vector2Distance(Vector2 a, Vector2 b);
 
 	void spawnParticle(std::vector<Particle>& particles);
 
