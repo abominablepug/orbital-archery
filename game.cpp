@@ -44,6 +44,7 @@ Game::Game(Vector2 dragStartPos) {
 	particleMass = 50.0f;
 	zoomLevel = 1.0f;
 	timeScale = 1.0f;
+	isDebug = false;
 
 	initBackground();
 }
@@ -108,7 +109,7 @@ void Game::spawnCelestialBody(std::vector<CelestialBody>& celestialBodies) {
 	}
 	if (IsMouseButtonReleased(MOUSE_RIGHT_BUTTON)) {
 		float radius = Vector2Distance(dragStartPos, currentPos);
-		CelestialBody newBody(dragStartPos, radius);
+		CelestialBody newBody(dragStartPos, radius, GetRandomValue(0, 7));
 		celestialBodies.push_back(newBody);
 	}
 }
@@ -201,7 +202,6 @@ float GuiSlider(Rectangle bounds, const char* text, float value, float min, floa
 }
 
 void Game::drawSideBar(std::vector<Particle>& particles, std::vector<CelestialBody>& celestialBodies) {
-    // 1. Toggle Button (Always visible)
     if (!isSideBarOpen) {
         DrawRectangleRec(sideBarToggleRect, DARKGRAY);
         DrawText(">", sideBarToggleRect.x + 8, sideBarToggleRect.y + 5, 20, WHITE);
@@ -211,12 +211,10 @@ void Game::drawSideBar(std::vector<Particle>& particles, std::vector<CelestialBo
         return;
     }
 
-    // 2. Sidebar Background
-    sideBarRect.height = (float)GetScreenHeight(); // Update height on resize
+    sideBarRect.height = (float)GetScreenHeight();
     DrawRectangleRec(sideBarRect, Fade(BLACK, 0.9f));
     DrawRectangleLinesEx(sideBarRect, 2, PURPLE);
 
-    // Close Button
     Rectangle closeBtn = { sideBarRect.width - 40, 10, 30, 30 };
     DrawText("X", closeBtn.x + 8, closeBtn.y + 5, 20, RED);
     if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), closeBtn)) {
@@ -248,7 +246,17 @@ void Game::drawSideBar(std::vector<Particle>& particles, std::vector<CelestialBo
 
     startY += gap;
 
-    // 3. Zoom Slider/Dial
+    // 3. Toggle Boundaries
+    Rectangle debugBtn = { startX, startY, 210, 40 };
+    DrawRectangleRec(debugBtn, isDebug? DARKGREEN : DARKGRAY);
+    DrawText(isDebug ? "DEBUG: ON" : "DEBUG: OFF", debugBtn.x + 50, debugBtn.y + 10, 20, WHITE);
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(GetMousePosition(), debugBtn)) {
+        isDebug = !isDebug;
+    }
+
+    startY += gap;
+
+    // 4. Zoom Slider/Dial
     char zoomText[32];
     sprintf(zoomText, "Camera Zoom: %.2fx", zoomLevel);
     zoomLevel = GuiSlider({startX, startY + 20, 210, 10}, zoomText, zoomLevel, 0.1f, 3.0f);
@@ -256,14 +264,14 @@ void Game::drawSideBar(std::vector<Particle>& particles, std::vector<CelestialBo
 
     startY += gap;
 
-    // 4. Mass Slider
+    // 5. Mass Slider
     char massText[32];
     sprintf(massText, "Proj. Mass: %.0fkg", particleMass);
     particleMass = GuiSlider({startX, startY + 20, 210, 10}, massText, particleMass, 1.0f, 2000.0f);
 
     startY += gap;
 
-    // 5. Time Scale
+    // 6. Time Scale
     char timeText[32];
     sprintf(timeText, "Time Speed: %.2fx", timeScale);
     timeScale = GuiSlider({startX, startY + 20, 210, 10}, timeText, timeScale, 0.0f, 5.0f);

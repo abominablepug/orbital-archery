@@ -35,6 +35,7 @@ public:
 	float particleMass;
 	float zoomLevel;
 	float timeScale;
+	bool isDebug;
 
 	Game(Vector2 dragStartPos = {0, 0});
 

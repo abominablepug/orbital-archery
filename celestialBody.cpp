@@ -2,16 +2,15 @@
 #include "raylib.h"
 #include <cmath>
 
-
-CelestialBody::CelestialBody(Vector2 position, float radius) {
+CelestialBody::CelestialBody(Vector2 position, float radius, int texIndex) {
 	this->radius = radius;
 	this->position = position;
+	this->texIndex = texIndex;
 }
 
 Vector2 CelestialBody::resultantAcceleration(Vector2& otherPosition) {
-	const float density = 1.5f;
-	const float G = 5000.0f;  // Scaled gravitational constant for game physics
-	float mass = density * (radius * radius * PI);  // Mass proportional to area, scaled for effect
+	const float G = 1000.0f;  // Scaled gravitational constant for game physics
+	float mass = radius * radius * 100.0f;  // Mass proportional to area, scaled for effect
 
 	float dx = otherPosition.x - position.x;
 	float dy = otherPosition.y - position.y;
@@ -34,6 +33,8 @@ Vector2 CelestialBody::resultantAcceleration(Vector2& otherPosition) {
 }
 
 void CelestialBody::draw() {
-	DrawCircleV(position, radius, GREEN);
+	float scale = (radius * 2.0f) / celestialTex[texIndex].width;
+	Vector2 pos = { position.x - radius, position.y - radius };
+	DrawTextureEx(celestialTex[texIndex], pos, 0.0f, scale, WHITE);
 }
 

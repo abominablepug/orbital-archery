@@ -5,6 +5,8 @@
 #include "celestialBody.h"
 #include <vector>
 
+extern Texture2D projectileTex;
+
 class Particle {
     private:
     Vector2 position;
@@ -30,7 +32,7 @@ class Particle {
 
     void update(float dt);
 
-    void draw();
+    void draw(bool isDebug);
 
 	Vector2 getPosition() { return position; }
 

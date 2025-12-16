@@ -3,13 +3,16 @@
 
 #include "raylib.h"
 
+extern Texture2D celestialTex[8];
+
 class CelestialBody {
 private:
 	float radius;
 	Vector2 position;
+	int texIndex;
 
 public:
-	CelestialBody(Vector2 position, float radius);
+	CelestialBody(Vector2 position, float radius, int texIndex);
 
 	Vector2 resultantAcceleration(Vector2& otherPosition);
 

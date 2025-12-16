@@ -143,7 +143,16 @@ void Particle::update(float dt) {
 	position.y += velocity.y * dt;
 }
 
-void Particle::draw() {
-	DrawCircle(position.x, position.y, radius, color);
+void Particle::draw(bool isDebug) {
+	float scale = (radius * 2.0f) / projectileTex.width;
+	float angle = atan2f(velocity.y, velocity.x) * RAD2DEG;
+	Rectangle source = { 0, 0, (float)projectileTex.width, (float)projectileTex.height };
+	Rectangle dest = { position.x, position.y, projectileTex.width * scale, projectileTex.height * scale };
+	Vector2 origin = { projectileTex.width * scale / 2.0f, projectileTex.height * scale / 2.0f };
+	DrawTexturePro(projectileTex, source, dest, origin, angle, WHITE);
+
+	if (isDebug) {
+		DrawLineV(this->position, Vector2Add(position, acceleration * 0.005), WHITE );
+	}
 }
 
