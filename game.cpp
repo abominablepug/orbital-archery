@@ -9,6 +9,21 @@
 
 const float mult = 2.0f;
 
+void Game::initBackground() {
+    int numStars = 50000;
+    for (int i = 0; i < numStars; i++) {
+        Star s;
+        s.position = { (float)GetRandomValue(-20000, 20000), (float)GetRandomValue(-20000, 20000) };
+
+        s.size = GetRandomValue(1, 3);
+
+        int brightness = GetRandomValue(100, 255);
+        s.color = { (unsigned char)brightness, (unsigned char)brightness, (unsigned char)(brightness + GetRandomValue(0, 20)), 255 };
+
+        stars.push_back(s);
+    }
+}
+
 Game::Game(Vector2 dragStartPos) {
 	this->dragStartPos = dragStartPos;
 	this->currentState = MENU;
@@ -29,6 +44,8 @@ Game::Game(Vector2 dragStartPos) {
 	particleMass = 50.0f;
 	zoomLevel = 1.0f;
 	timeScale = 1.0f;
+
+	initBackground();
 }
 
 Vector2 Game::getWorldMousePosition() {
@@ -38,7 +55,7 @@ Vector2 Game::getWorldMousePosition() {
 void Game::spawnParticle(std::vector<Particle>& particles) {
 	if (isSideBarOpen && CheckCollisionPointRec(GetMousePosition(), sideBarRect)) return;
 
-	Vector2 currentPos = GetMousePosition();
+	Vector2 currentPos = getWorldMousePosition();
 	if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 		dragStartPos = currentPos;
 	}
@@ -81,7 +98,7 @@ void Game::spawnParticle(std::vector<Particle>& particles) {
 void Game::spawnCelestialBody(std::vector<CelestialBody>& celestialBodies) {
 	if (isSideBarOpen && CheckCollisionPointRec(GetMousePosition(), sideBarRect)) return;
 
-	Vector2 currentPos = GetMousePosition();
+	Vector2 currentPos = getWorldMousePosition();
 	if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
 		dragStartPos = currentPos;
 	}
@@ -96,6 +113,18 @@ void Game::spawnCelestialBody(std::vector<CelestialBody>& celestialBodies) {
 	}
 }
 
+void Game::drawBackground() {
+	for (const auto& star : stars) {
+		float margin = 100.0f / camera.zoom;
+
+		Vector2 screenPos = GetWorldToScreen2D(star.position, camera);
+        if (screenPos.x > -margin && screenPos.x < GetScreenWidth() + margin &&
+            screenPos.y > -margin && screenPos.y < GetScreenHeight() + margin) {
+             DrawRectangleV(star.position, {(float)star.size, (float)star.size}, star.color);
+        }
+	}
+}
+
 void Game::drawStartScreen() {
     int screenWidth = GetScreenWidth();
     int screenHeight = GetScreenHeight();
@@ -106,6 +135,7 @@ void Game::drawStartScreen() {
     
     const char* title = "Orbital Archery";
     const char* subtitle = "An out of this world projectile motion simulation";
+    const char* credits = "Made By: Abominablepug";
     
     const char* instruction1 = "Left Click and Drag: Shoot Particle";
     const char* instruction2 = "Right Click and Drag: Create Celestial Body";
@@ -121,6 +151,7 @@ void Game::drawStartScreen() {
 
     int titleWidth = MeasureText(title, titleFontSize);
     int subWidth = MeasureText(subtitle, subFontSize);
+	int credWidth = MeasureText(credits, subFontSize);
     
     int instruction1Width = MeasureText(instruction1, instructionFontSize);
     int instruction2Width = MeasureText(instruction2, instructionFontSize);
@@ -129,22 +160,17 @@ void Game::drawStartScreen() {
     
     int ctaWidth = MeasureText(cta, ctaFontSize);
 
-    // --- DRAWING LOGIC (Y-Offsets adjusted to prevent overlap) ---
-
-    // 1. Title Section (Moved higher up: centerY - 250)
     DrawText(title, centerX - titleWidth/2, centerY - 250, titleFontSize, PURPLE);
     DrawText(subtitle, centerX - subWidth/2, centerY - 160, subFontSize, WHITE);
+    DrawText(credits, centerX - credWidth/2, centerY - 120, subFontSize, WHITE);
 
-    // 2. Instructions Section (Centered block)
-    // We space them 40 pixels apart so they don't touch
-    DrawText(instruction1, (screenWidth - instruction1Width) / 2, centerY - 60, instructionFontSize, LIGHTGRAY);
-    DrawText(instruction2, (screenWidth - instruction2Width) / 2, centerY - 20, instructionFontSize, LIGHTGRAY);
-    DrawText(instruction3, (screenWidth - instruction3Width) / 2, centerY + 20, instructionFontSize, LIGHTGRAY);
-    DrawText(instruction4, (screenWidth - instruction4Width) / 2, centerY + 60, instructionFontSize, LIGHTGRAY);
+    DrawText(instruction1, (screenWidth - instruction1Width) / 2, centerY - 40, instructionFontSize, LIGHTGRAY);
+    DrawText(instruction2, (screenWidth - instruction2Width) / 2, centerY, instructionFontSize, LIGHTGRAY);
+    DrawText(instruction3, (screenWidth - instruction3Width) / 2, centerY + 40, instructionFontSize, LIGHTGRAY);
+    DrawText(instruction4, (screenWidth - instruction4Width) / 2, centerY + 80, instructionFontSize, LIGHTGRAY);
     
-    // 3. CTA Section (Moved to bottom: centerY + 150)
     if ((int)(GetTime() * 2) % 2 == 0) {
-        DrawText(cta, centerX - ctaWidth/2, centerY + 150, ctaFontSize, GRAY);
+        DrawText(cta, centerX - ctaWidth/2, centerY + 170, ctaFontSize, GRAY);
     }
 
     if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
@@ -153,7 +179,6 @@ void Game::drawStartScreen() {
 }
 
 float GuiSlider(Rectangle bounds, const char* text, float value, float min, float max) {
-
 	DrawText(text, bounds.x, bounds.y - 20, 20, WHITE);
     DrawRectangleRec(bounds, DARKGRAY);
     
@@ -242,5 +267,4 @@ void Game::drawSideBar(std::vector<Particle>& particles, std::vector<CelestialBo
     char timeText[32];
     sprintf(timeText, "Time Speed: %.2fx", timeScale);
     timeScale = GuiSlider({startX, startY + 20, 210, 10}, timeText, timeScale, 0.0f, 5.0f);
-
 }

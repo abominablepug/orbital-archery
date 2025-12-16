@@ -7,6 +7,12 @@
 #include "particle.h"
 #include "celestialBody.h"
 
+struct Star {
+	Vector2 position;
+	int size;
+	Color color;
+};
+
 enum GameState {
 	MENU,
 	PLAYING
@@ -18,6 +24,9 @@ private:
 	bool isSideBarOpen;
 	Rectangle sideBarRect;
 	Rectangle sideBarToggleRect;
+
+	std::vector<Star> stars;
+	void initBackground();
 public:
 	GameState currentState;
 	Camera2D camera;
@@ -33,6 +42,8 @@ public:
 
 	void spawnParticle(std::vector<Particle>& particles);
 	void spawnCelestialBody(std::vector<CelestialBody>& celestialBodies);
+
+	void drawBackground();
 
 	void drawStartScreen();
 	void drawSideBar(std::vector<Particle>& particles, std::vector<CelestialBody>& celestialBodies);

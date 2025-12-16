@@ -15,7 +15,7 @@ class Particle {
 
 	void particleCollision(std::vector<Particle>& particles, int index);
 
-	void boundsCollision(int screenWidth, int screenHeight);
+	void boundsCollision(float left, float right, float top, float bottom);
 
     public:
     Particle(Vector2 pos, Vector2 vel, Color col, int rad = 5);
@@ -26,7 +26,7 @@ class Particle {
 
 	void celestialCollision(std::vector<CelestialBody>& celestialBodies);
 
-	void collisionCheck(std::vector<Particle>& particles, int index, int screenWidth, int screenHeight, bool enableWallCollision);
+	void collisionCheck(std::vector<Particle>& particles, int index, float left, float right, float top, float bottom, bool enableWallCollision);
 
     void update(float dt);
 

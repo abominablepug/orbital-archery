@@ -78,30 +78,28 @@ void Particle::particleCollision(std::vector<Particle>& particles, int index) {
 	}
 }
 
-void Particle::boundsCollision(int screenWidth, int screenHeight) {
-	if (position.x - radius < 0) {
-		position.x = radius;
+void Particle::boundsCollision(float left, float right, float top, float bottom) {
+	if (position.x - radius < left) {
+		position.x = left + radius;
 		velocity.x *= -1;
-	} else if (position.x + radius > screenWidth) {
-		position.x = screenWidth - radius;
+	} else if (position.x + radius > right) {
+		position.x = right - radius;
 		velocity.x *= -1;
 	}
 
-	if (position.y - radius < 0) {
-		position.y = radius;
+	if (position.y - radius < top) {
+		position.y = top + radius;
 		velocity.y *= -1;
-	} else if (position.y + radius > screenHeight) {
-		position.y = screenHeight - radius;
+	} else if (position.y + radius > bottom) {
+		position.y = bottom - radius;
 		velocity.y *= -1;
 	}
 }
 
-void Particle::collisionCheck(std::vector<Particle>& particles, int index, int screenWidth, int screenHeight, bool enableWallCollision) {
+void Particle::collisionCheck(std::vector<Particle>& particles, int index, float left, float right, float top, float bottom, bool enableWallCollision) {
 	particleCollision(particles, index);
-	if (enableWallCollision) boundsCollision(screenWidth, screenHeight);
-	}
-
-void Particle::celestialCollision(std::vector<CelestialBody>& celestialBodies) {
+	if (enableWallCollision) boundsCollision(left, right, top, bottom);
+}void Particle::celestialCollision(std::vector<CelestialBody>& celestialBodies) {
 	for (size_t i = 0; i < celestialBodies.size(); i++) {
 		CelestialBody& body = celestialBodies[i];
 
