@@ -3,6 +3,7 @@
 #include "particle.h"
 #include "celestialBody.h"
 #include "game.h"
+#include "embedded_assets.h"
 
 Game game = Game();
 std::vector<Particle> particles;
@@ -16,6 +17,13 @@ const int TARGET_FPS = 180;
 
 Texture2D projectileTex;
 Texture2D celestialTex[8];
+
+Texture2D LoadTextureFromEmbedded(const unsigned char* data, int dataSize) {
+    Image img = LoadImageFromMemory(".png", data, dataSize);
+    Texture2D tex = LoadTextureFromImage(img);
+    UnloadImage(img);
+    return tex;
+}
 
 void update(float dt) {
 	float left = game.camera.target.x - (SCREEN_WIDTH / 2.0f) / game.camera.zoom;
@@ -40,10 +48,20 @@ int main() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Orbital Archery");
     SetTargetFPS(TARGET_FPS);
 
-    projectileTex = LoadTexture("assets/arrow.png");
+	projectileTex = LoadTextureFromEmbedded(assets_arrow_png, assets_arrow_png_len);
+
+	const unsigned char* planetData[] = {
+        assets_planet1_png, assets_planet2_png, assets_planet3_png, assets_planet4_png,
+        assets_planet5_png, assets_planet6_png, assets_planet7_png, assets_planet8_png
+    };
+    
+    const unsigned int planetLens[] = {
+        assets_planet1_png_len, assets_planet2_png_len, assets_planet3_png_len, assets_planet4_png_len,
+        assets_planet5_png_len, assets_planet6_png_len, assets_planet7_png_len, assets_planet8_png_len
+    };
+
     for(int i = 0; i < 8; i++) {
-        std::string path = "assets/planet" + std::to_string(i + 1) + ".png";
-        celestialTex[i] = LoadTexture(path.c_str());
+        celestialTex[i] = LoadTextureFromEmbedded(planetData[i], planetLens[i]);
     }
 
 	game.camera.offset = { SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f };
